@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+</head>
+
+<body>
+    <% if (currentUser) { %>
+    <h1> Welcome <%= currentUser.firstname %> </h1>
+    <a href="/users/logout">
+        <button>Logout</button>
+    </a>
+    <br /> <br />
+    <% if (currentUser.status === 'pleb') { %>
+    <form action="/users/updateStatus" method="POST">
+        <label for="secret">Enter the secret to enter the club: </label>
+        <br />
+        <input id="secret" name="secret" type="password" autocomplete="secret" required>
+        <button type="submit">BECOME A PRIVATE MEMBER</button>
+    </form>
+    <% } else { %>
+    <h5>You are a member of the golden club</h5>
+    <% } %>
+    <a href="/messages/create">
+        <button>Leave a message</button>
+    </a>
+    <% } else { %>
+    <a href="/users/login">
+        <button>Login</button>
+    </a>
+    <% } %>
+    <br /> <br />
+    <% messages.forEach(message => { %>
+    <div class="user-message" style="border-style: solid;">
+        <h3 style="color: red;">Title: </h3>
+        <p> <%= message.title %> </p>
+        <h3 style="color: red;">Message: </h3>
+        <p> <%= message.content %> </p>
+        <% if ((currentUser || {}).status === 'gold') { %>
+        <p><%= message.user_id %></p>
+        <p><%= message.createdat %></p>
+        <% } %>
+        <% if ((currentUser || {}).status === 'admin') { %>
+        <form action="/messages/delete" method="POST">
+            <input type="hidden" name="messageId" value="<%= message.id %>">
+            <button type="submit">DELETE</button>
+        </form>
+        <% } %>
+    </div>
+    <br />
+    <% }); %>
+</body>
+
+</html>
